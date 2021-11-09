@@ -1,4 +1,4 @@
-# PokeBot
+# PokéBot
 
 This is a discord bot made for Pokemon Servers that want to add search functionality for pokemon, moves, items, and abilities to their server
 
