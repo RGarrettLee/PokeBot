@@ -15,6 +15,9 @@ class Moves(commands.Cog):
         self.bot = bot
         self.loadData()
         self.link = 'https://pokeapi.co/api/v2/move/'
+        self.hitAll = 'https://i.imgur.com/HKjZ4wF.png'
+        self.hitDouble = 'https://i.imgur.com/hqWBuqr.png'
+        self.hitSingle = 'https://i.imgur.com/cYfyRal.png'
         self.spellingKey = self.serverData['spellcheck']['token']
 
     def tupleConvert(self, word):
@@ -43,6 +46,9 @@ class Moves(commands.Cog):
                 embed.add_field(name='**Accuracy**', value='{0}'.format(moveData['accuracy']), inline=False)
                 embed.add_field(name='**PP**', value='{0}'.format(moveData['pp']), inline=False)
                 embed.add_field(name='**Priority**', value='{0}'.format(moveData['priority']), inline=False)
+                if (moveData['target']['name'] == 'all-opponents'): embed.set_image(url=self.hitDouble)
+                if (moveData['target']['name'] == 'all-other-pokemon'): embed.set_image(url=self.hitAll)
+                if (moveData['target']['name'] == 'selected-pokemon'): embed.set_image(url=self.hitSingle)
 
                 await message.edit(content='Retrieved {0}'.format(moveData['name'].replace('-', ' ').title()), embed=embed)
             else:
