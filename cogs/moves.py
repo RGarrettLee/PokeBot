@@ -15,9 +15,9 @@ class Moves(commands.Cog):
         self.bot = bot
         self.loadData()
         self.link = 'https://pokeapi.co/api/v2/move/'
-        self.hitAll = 'https://i.imgur.com/HKjZ4wF.png'
-        self.hitDouble = 'https://i.imgur.com/hqWBuqr.png'
-        self.hitSingle = 'https://i.imgur.com/cYfyRal.png'
+        self.hitAll = 'https://i.imgur.com/xlDHKuT.png'
+        self.hitDouble = 'https://i.imgur.com/6m0RXfI.png'
+        self.hitSingle = 'https://i.imgur.com/X2p0cb2.png'
         self.spellingKey = self.serverData['spellcheck']['token']
 
     def tupleConvert(self, word):
