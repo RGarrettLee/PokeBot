@@ -8,7 +8,7 @@ This is a discord bot made for Pokemon Servers that want to add search functiona
 
 ## Search Function
 
-![Search Function](https://i.imgur.com/La3Y1xP.png)
+![Search Function](https://i.imgur.com/La3Y1xP.png) ![Item function](https://i.imgur.com/13NzQce.png)
 
 ## Author
 - Garrett Lee
