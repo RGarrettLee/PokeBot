@@ -49,12 +49,6 @@ class Location(commands.Cog):
 
                 gameAreas = games.items()
 
-                for i in gameAreas:
-                    if (i[0] == 'Platinum'):
-                        title = i[0]
-                        for j in i[1]:
-                            locations += j + '\n'
-
                 embed = discord.Embed(title='{0} Encounter Locations'.format(pokeData['name'].format('-', ' ').title()), description='Where to find {0} across the Pokémon games'.format(pokeData['name'].replace('-', ' ').title()), color=0xfbca3c)
                 embed.set_thumbnail(url=pokeData['sprites']['other']['home']['front_default'])
                 for i in gameAreas:
