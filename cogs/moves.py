@@ -18,6 +18,8 @@ class Moves(commands.Cog):
         self.hitAll = 'https://i.imgur.com/xlDHKuT.png'
         self.hitDouble = 'https://i.imgur.com/6m0RXfI.png'
         self.hitSingle = 'https://i.imgur.com/X2p0cb2.png'
+        self.ally = 'https://i.imgur.com/BZJlsf1.png'
+        self.user = 'https://i.imgur.com/GSl79dr.png'
         self.spellingKey = self.serverData['spellcheck']['token']
 
     def tupleConvert(self, word):
@@ -49,6 +51,8 @@ class Moves(commands.Cog):
                 if (moveData['target']['name'] == 'all-opponents'): embed.set_image(url=self.hitDouble)
                 if (moveData['target']['name'] == 'all-other-pokemon'): embed.set_image(url=self.hitAll)
                 if (moveData['target']['name'] == 'selected-pokemon'): embed.set_image(url=self.hitSingle)
+                if (moveData['target']['name'] == 'ally'): embed.set_image(url=self.ally)
+                if (moveData['target']['name'] == 'user'): embed.set_image(url=self.user)
 
                 await message.edit(content='Retrieved {0}'.format(moveData['name'].replace('-', ' ').title()), embed=embed)
             else:
