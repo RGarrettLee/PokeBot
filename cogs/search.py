@@ -2,7 +2,7 @@ import discord
 import json
 import requests
 import io
-from serpapi import GoogleSearch
+from fuzzywuzzy import process
 from discord.ext import commands
 
 class Search(commands.Cog):
@@ -10,28 +10,30 @@ class Search(commands.Cog):
         with open('serverData.json', 'r') as f:
             self.serverData = json.loads(f.read())
             self.emotes = self.serverData['types']
+        data = requests.get(self.link).json()
+        limit = data['count']
+
+        pokemon = requests.get(self.count + f'{limit}').json()
+
+        self.names = []
+
+        for i in pokemon['results']:
+            self.names.append(i['name'])
 
     def __init__(self, bot):
         self.bot = bot
-        self.loadData()
         self.link = 'https://pokeapi.co/api/v2/pokemon/'
-        self.spellingKey = self.serverData['spellcheck']['token']
+        self.count = 'https://pokeapi.co/api/v2/pokemon?limit='
+        self.loadData()
 
     def tupleConvert(self, word):
         str = ' '.join(word)
         return str.lower()
 
-    def default(self, input):
-        if (input.lower() == 'nidoran'):
-            input = 'nidoran-m'
-        elif (input.lower() == "farfetch'd"):
-            input = 'farfetchd'
-
     @commands.command(aliases=['pokemon', 'info', 'pokémon'])
     async def search(self, ctx, *arg):
         message = await ctx.send('Retrieving Pokémon...')
         try:
-            checkSpelling = self.tupleConvert(arg)
             if (arg[0].lower() == 'alolan' or arg[0] == 'galarian' or arg[0] == 'mega' or arg[0] == 'gigantamax' or arg[0] == 'gmax' or arg[0] == 'primal'):
                 form = arg[::-1]
                 pokemon = self.tupleConvert(form)
@@ -41,8 +43,11 @@ class Search(commands.Cog):
 
             pokemon = pokemon.replace(' ', '-').replace('.', '').replace("'", '')
 
-            if (requests.get(self.link + pokemon).status_code == 200):
-                pokeData = requests.get(self.link + pokemon).json()
+            highest = process.extractOne(pokemon, self.names)
+            newPoke = highest[0].replace(' ', '-').replace('.', '').replace("'", '')
+
+            if (requests.get(self.link + newPoke).status_code == 200):
+                pokeData = requests.get(self.link + newPoke).json()
                 extraData = requests.get(pokeData['species']['url']).json()
                 evoData = requests.get(extraData['evolution_chain']['url']).json()
                 abilities = ''
@@ -104,18 +109,6 @@ class Search(commands.Cog):
                 if (evolves != ''): embed.add_field(name='**Next Evolution**', value=evolves, inline=True)
 
                 await message.edit(content='Retrieved {0}'.format(pokeData['name'].replace('-', ' ').title()), embed=embed)
-            else:
-                params = {
-                    "q": checkSpelling,
-                    "hl": "en",
-                    "gl": "us",
-                    "api_key": self.spellingKey
-                }
-                search = GoogleSearch(params)
-                results = search.get_dict()
-                search_information = results['search_information']
-                fixedSpelling = search_information['showing_results_for']
-                await message.edit(content=f'{checkSpelling} could not be found. Did you mean {fixedSpelling}?')
         except:
             await message.edit(content='Specify a form if the pokémon has multiple (ex. deoxys -> depxys normal)')
 

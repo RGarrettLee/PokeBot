@@ -1,7 +1,7 @@
 import discord
 import json
 import requests
-from serpapi import GoogleSearch
+from fuzzywuzzy import process
 from discord.ext import commands
 
 class Item(commands.Cog):
@@ -9,12 +9,21 @@ class Item(commands.Cog):
         with open('serverData.json', 'r') as f:
             self.serverData = json.loads(f.read())
             self.emotes = self.serverData['types']
+        data = requests.get(self.link).json()
+        limit = data['count']
+
+        self.items = requests.get(self.count + f'{limit}').json()
+
+        self.names = []
+
+        for i in self.items['results']:
+            self.names.append(i['name'])
 
     def __init__(self, bot):
         self.bot = bot
-        self.loadData()
         self.link = 'https://pokeapi.co/api/v2/item/'
-        self.spellingKey = self.serverData['spellcheck']['token']
+        self.count = 'https://pokeapi.co/api/v2/item?limit='
+        self.loadData()
 
     def tupleConvert(self, word):
         str = ' '.join(word)
@@ -24,14 +33,15 @@ class Item(commands.Cog):
     async def item(self, ctx, *arg):
         message = await ctx.send('Retrieving item...')
         try:
-            checkSpelling = self.tupleConvert(arg)
-
             item = self.tupleConvert(arg)
 
             item = item.replace(' ', '-')
 
-            if (requests.get(self.link + item).status_code == 200):
-                itemData = requests.get(self.link + item).json()
+            highest = process.extractOne(item, self.names)
+            newItem = highest[0].replace(' ', '-')
+
+            if (requests.get(self.link + newItem).status_code == 200):
+                itemData = requests.get(self.link + newItem).json()
 
                 effect = ''
 
@@ -47,18 +57,6 @@ class Item(commands.Cog):
                 embed.add_field(name='**Fling Damage**', value=itemData['fling_power'], inline=False)
 
                 await message.edit(content='Retrieved {0}'.format(itemData['name'].replace('-', ' ').title()), embed=embed)
-            else:
-                params = {
-                    "q": checkSpelling,
-                    "hl": "en",
-                    "gl": "us",
-                    "api_key": self.spellingKey
-                }
-                search = GoogleSearch(params)
-                results = search.get_dict()
-                search_information = results['search_information']
-                fixedSpelling = search_information['showing_results_for']
-                await message.edit(content=f'{checkSpelling} could not be found. Did you mean {fixedSpelling}?')
         except:
             await message.edit(content='An error occured')
 
