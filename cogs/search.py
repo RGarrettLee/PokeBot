@@ -34,10 +34,10 @@ class Search(commands.Cog):
     async def search(self, ctx, *arg):
         message = await ctx.send('Retrieving Pokémon...')
         try:
-            if (arg[0].lower() == 'alolan' or arg[0] == 'galarian' or arg[0] == 'mega' or arg[0] == 'gigantamax' or arg[0] == 'gmax' or arg[0] == 'primal'):
+            if (arg[0].lower() == 'alolan' or arg[0] == 'galarian' or arg[0] == 'mega' or arg[0] == 'gigantamax' or arg[0] == 'gigantimax' or arg[0] == 'gmax' or arg[0] == 'primal'):
                 form = arg[::-1]
                 pokemon = self.tupleConvert(form)
-                pokemon = pokemon.replace('alolan', 'alola').replace('galarian', 'galar').replace('gigantamax', 'gmax')
+                pokemon = pokemon.replace('alolan', 'alola').replace('galarian', 'galar').replace('gigantamax', 'gmax').replace('gigantimax', 'gmax')
             else:
                 pokemon = self.tupleConvert(arg)
 
